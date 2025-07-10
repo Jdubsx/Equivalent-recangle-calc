@@ -22,7 +22,7 @@ body {
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
     overflow: hidden;
     width: 100%;
-    max-width: 600px;
+    max-width: 1200px;
 }
 
 /* Header */
@@ -64,10 +64,14 @@ header p {
 main {
     padding: 30px;
     background: #34495e;
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
 }
 
 .input-section {
-    margin-bottom: 30px;
+    flex: 1;
+    margin-bottom: 0;
 }
 
 .input-group {
@@ -144,8 +148,9 @@ main {
     border: 1px solid #4a5d6b;
     border-radius: 15px;
     padding: 25px;
-    margin-top: 20px;
+    margin-top: 0;
     display: none;
+    flex: 1;
 }
 
 .result-section.show {
@@ -263,6 +268,11 @@ footer p {
         border-radius: 0;
         height: 100vh;
         max-width: none;
+    }
+    
+    main {
+        flex-direction: column;
+        gap: 20px;
     }
     
     header h1 {

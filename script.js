@@ -4,8 +4,8 @@ class RectangleCalculator {
         this.areaInput = document.getElementById('area');
         this.calculateBtn = document.getElementById('calculate-btn');
         this.resultSection = document.getElementById('result-section');
+        this.lengthValue = document.getElementById('length-value');
         this.widthValue = document.getElementById('width-value');
-        this.heightValue = document.getElementById('height-value');
         this.errorMessage = document.getElementById('error-message');
         this.canvas = document.getElementById('rectangle-canvas');
         this.ctx = this.canvas.getContext('2d');
@@ -52,8 +52,8 @@ class RectangleCalculator {
         }
         
         // Display results
-        this.displayResults(dimensions.width, dimensions.height);
-        this.drawRectangle(dimensions.width, dimensions.height);
+        this.displayResults(dimensions.length, dimensions.width);
+        this.drawRectangle(dimensions.length, dimensions.width);
     }
     
     validateInputs(perimeter, area) {
@@ -87,25 +87,25 @@ class RectangleCalculator {
         }
         
         const sqrtDiscriminant = Math.sqrt(discriminant);
-        const width = (halfPerimeter + sqrtDiscriminant) / 2;
-        const height = (halfPerimeter - sqrtDiscriminant) / 2;
+        const dim1 = (halfPerimeter + sqrtDiscriminant) / 2;
+        const dim2 = (halfPerimeter - sqrtDiscriminant) / 2;
         
-        // Ensure width is the longer side for consistency
+        // Ensure length is the longer side and width is the shorter side
         return {
-            width: Math.max(width, height),
-            height: Math.min(width, height)
+            length: Math.max(dim1, dim2),
+            width: Math.min(dim1, dim2)
         };
     }
     
-    displayResults(width, height) {
+    displayResults(length, width) {
+        this.lengthValue.textContent = length.toFixed(2);
         this.widthValue.textContent = width.toFixed(2);
-        this.heightValue.textContent = height.toFixed(2);
         
         this.resultSection.classList.add('show');
         this.hideError();
     }
     
-    drawRectangle(width, height) {
+    drawRectangle(length, width) {
         const canvas = this.canvas;
         const ctx = this.ctx;
         
@@ -121,45 +121,45 @@ class RectangleCalculator {
         const availableWidth = canvasWidth - 2 * padding;
         const availableHeight = canvasHeight - 2 * padding;
         
-        const scaleX = availableWidth / width;
-        const scaleY = availableHeight / height;
+        const scaleX = availableWidth / length;
+        const scaleY = availableHeight / width;
         const scale = Math.min(scaleX, scaleY);
         
         // Calculate actual rectangle dimensions on canvas
+        const rectLength = length * scale;
         const rectWidth = width * scale;
-        const rectHeight = height * scale;
         
         // Center the rectangle
-        const x = (canvasWidth - rectWidth) / 2;
-        const y = (canvasHeight - rectHeight) / 2;
+        const x = (canvasWidth - rectLength) / 2;
+        const y = (canvasHeight - rectWidth) / 2;
         
         // Draw rectangle
         ctx.fillStyle = '#3498db';
-        ctx.fillRect(x, y, rectWidth, rectHeight);
+        ctx.fillRect(x, y, rectLength, rectWidth);
         
         // Draw rectangle border
         ctx.strokeStyle = '#2980b9';
         ctx.lineWidth = 2;
-        ctx.strokeRect(x, y, rectWidth, rectHeight);
+        ctx.strokeRect(x, y, rectLength, rectWidth);
         
         // Draw dimensions
-        this.drawDimensions(ctx, x, y, rectWidth, rectHeight, width, height);
+        this.drawDimensions(ctx, x, y, rectLength, rectWidth, length, width);
     }
     
-    drawDimensions(ctx, x, y, rectWidth, rectHeight, actualWidth, actualHeight) {
+    drawDimensions(ctx, x, y, rectLength, rectWidth, actualLength, actualWidth) {
         ctx.fillStyle = '#ecf0f1';
         ctx.font = '14px Arial';
         ctx.textAlign = 'center';
         
-        // Width dimension (bottom)
-        const widthText = `${actualWidth.toFixed(2)} units`;
-        ctx.fillText(widthText, x + rectWidth / 2, y + rectHeight + 25);
+        // Length dimension (bottom)
+        const lengthText = `${actualLength.toFixed(2)} units`;
+        ctx.fillText(lengthText, x + rectLength / 2, y + rectWidth + 25);
         
-        // Height dimension (right side)
+        // Width dimension (right side)
         ctx.save();
-        ctx.translate(x + rectWidth + 20, y + rectHeight / 2);
+        ctx.translate(x + rectLength + 20, y + rectWidth / 2);
         ctx.rotate(-Math.PI / 2);
-        ctx.fillText(`${actualHeight.toFixed(2)} units`, 0, 0);
+        ctx.fillText(`${actualWidth.toFixed(2)} units`, 0, 0);
         ctx.restore();
         
         // Draw dimension lines
@@ -167,16 +167,16 @@ class RectangleCalculator {
         ctx.lineWidth = 1;
         ctx.setLineDash([5, 5]);
         
-        // Width dimension line
+        // Length dimension line
         ctx.beginPath();
-        ctx.moveTo(x, y + rectHeight + 15);
-        ctx.lineTo(x + rectWidth, y + rectHeight + 15);
+        ctx.moveTo(x, y + rectWidth + 15);
+        ctx.lineTo(x + rectLength, y + rectWidth + 15);
         ctx.stroke();
         
-        // Height dimension line
+        // Width dimension line
         ctx.beginPath();
-        ctx.moveTo(x + rectWidth + 10, y);
-        ctx.lineTo(x + rectWidth + 10, y + rectHeight);
+        ctx.moveTo(x + rectLength + 10, y);
+        ctx.lineTo(x + rectLength + 10, y + rectWidth);
         ctx.stroke();
         
         ctx.setLineDash([]);
@@ -204,5 +204,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Add some example calculations in console for testing
 console.log('Equivalent Rectangle Calculator loaded!');
-console.log('Example: Perimeter=20, Area=25 → Width=7.5, Height=2.5');
-console.log('Example: Perimeter=12, Area=9 → Width=4.5, Height=1.5'); 
+console.log('Example: Perimeter=20, Area=25 → Length=7.5, Width=2.5');
+console.log('Example: Perimeter=12, Area=9 → Length=4.5, Width=1.5'); 
